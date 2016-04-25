@@ -53,22 +53,55 @@ var playerComponent = () => {
     });
 
     Crafty.c('MouseTracker', {
-        init: function () {
-            this.requires('Mouse, 2D');
-            this.bind('MouseDown', (e) => {
-                if (player) {
-                    player.jump(e.realX, e.realY);
-                }
-            });
-        },
         setPlayer: function (p) {
             player = p;
             return this;
+        },
+        click: function (e) {
+            if (player) {
+                player.jump(e.realX, e.realY);
+            }
         }
     });
 };
 
-var playerConstructor = (x, y, color, clickableArea) => {
+var startButtonComponent = () => {
+    Crafty.c('StartButton', {
+        init: function () {
+            this.requires('2D,MouseTracker');
+
+            this.attach(
+                Crafty.e('2D,DOM,Color,Mouse')
+                    .attr({x: 0, y: 0, w: 150, h: 110})
+                    .color('#000000')
+                    .bind('MouseOver', function () {
+                        this.color('#FFFF00');
+                    })
+                    .bind('MouseOut', function () {
+                        this.color('#000000');
+                    })
+                    .bind('MouseDown', (e) => {
+                        this.click(e);
+                    })
+            );
+
+            this.attach(
+                Crafty.e('2D,DOM,Color')
+                    .attr({x: 20, y: 25, w: 110, h: 60})
+                    .color('#FFFFFF')
+            );
+
+            this.attach(
+                Crafty.e('2D,DOM,Text')
+                    .attr({x: 20, y: 25, w: 110, h: 60})
+                    .text('Start')
+                    .textFont({size: '50px'})
+            );
+        }
+    });
+};
+
+var playerConstructor = (x, y, color, clickEntity) => {
     var player,
         clickArea;
     
@@ -79,48 +112,38 @@ var playerConstructor = (x, y, color, clickableArea) => {
         .gravityConst(2000)
     ;
 
-    if (!clickableArea) {
-        clickableArea = {
-            x: 0,
-            y: 0,
-            w: width,
-            h: height
-        };
+    if (!clickEntity) {
+        clickEntity = Crafty.e('MouseTracker')
+            .attr({
+                x: 0,
+                y: 0,
+                w: width,
+                h: height
+            })
+        ;
     }
 
-    clickArea = Crafty.e('MouseTracker')
-        .setPlayer(player)
-        .attr(clickableArea)
-    ;
+    clickEntity.setPlayer(player);
 
     return player;
+};
+
+var startButton = () => {
+    return Crafty.e('StartButton')
+        .attr({x: 680, y: height - height/2 - 25})
+    ;
 };
 
 var startMenu = () => {
 
     Crafty.scene('menu', () => {
+        var start;
         Crafty.background('#FFFFFF');
 
-        platformConstructor(0, height - 25, width, 25, '#00FF00');
-        platformConstructor(100, height - height/4, 100, 25, '#00FF00');
+        platformConstructor(0, height - 25, width, 25, '#000000');
 
-        Crafty.e('2D, DOM, Color, Start')
-            .attr({x: 680, y: height - height/2 - 25, w: 150, h: 110})
-            .color('#000000')
-        ;
-
-        Crafty.e('2D, DOM, Color, Start')
-            .attr({x: 700, y: height - height/2, w: 110, h: 60})
-            .color('#FFFFFF')
-        ;
-
-        Crafty.e('2D, DOM, Text, Start')
-            .attr({x: 700, y: height - height/2, w: 110, h: 200})
-            .text('Start')
-            .textFont({size: '50px'})
-        ;
-
-        playerConstructor(125, height - height/4, '#0000FF');
+        start = startButton();
+        playerConstructor(125, height - 25, '#FF0000', start);
     });
 };
 
@@ -128,6 +151,7 @@ var startMenu = () => {
 
     Crafty.init(width, height, 'game');
     playerComponent();
+    startButtonComponent();
 
     startMenu();
 
