@@ -15,9 +15,14 @@ var wallConstructor = (x, y, w, h, color) => {
         .color(color)
         .checkHits('Player')
         .bind('HitOn', function (hitData) {
-            console.log(hitData[0].overlap);
-            hitData[0].obj.attr({vx:0});
-            hitData[0].obj.x += hitData[0].overlap;
+            var hitObj = hitData[0].obj;
+            hitObj.attr({vx:0});
+
+            if (hitObj.x < this.x) {
+                hitObj.x = this.x - hitObj.w;
+            } else {
+                hitObj.x = this.x + this.w;
+            }
         })
     ;
 
