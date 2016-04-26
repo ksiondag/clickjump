@@ -42,7 +42,7 @@ var startButtonComponent = () => {
 
 var startButton = () => {
     return Crafty.e('StartButton')
-        .attr({x: 680, y: height - height/2 - 25})
+        .attr({x: 680, y: Crafty.viewport.height - Crafty.viewport.height/2 - 25})
     ;
 };
 
