@@ -11,8 +11,11 @@ var playerComponent = () => {
             });
         },
         jump: function (x, y) {
-            var attr, bottomY, midX, dx, dy;
+            var attr, midY, bottomY, midX, dx, dy;
 
+            // Alternative: apex is at middle of player rectangle
+            // Consideration for further iterations
+            midY = this.y + this.h/2;
             bottomY = this.y + this.h;
             midX = this.x + this.w/2;
 
