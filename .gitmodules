@@ -1,4 +1,0 @@
-[submodule "Crafty"]
-	path = Crafty
-	url = git@github.com:ksiondag/Crafty.git
-	branch = develop
